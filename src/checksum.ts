@@ -5,10 +5,14 @@ import chalk from 'chalk';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { fileExists } from './utils';
+import { loadConfig, Config } from './config';
 
 const availableAlgorithms = ['sha1', 'sha256', 'sha384', 'sha512', 'md5'];
 
 async function main(): Promise<void> {
+    const config: Config = await loadConfig();
+    const defaultAlgorithms = config.defaultAlgorithms || [];
+
     yargs(hideBin(process.argv))
         .wrap(null) // Disable wrapping
         .command(
@@ -25,6 +29,7 @@ async function main(): Promise<void> {
                         type: 'string',
                         array: true,
                         choices: availableAlgorithms,
+                        default: defaultAlgorithms,
                     });
             },
             async (argv) => {
