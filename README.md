@@ -74,6 +74,7 @@ defaultAlgorithms:
 ```ini
 defaultAlgorithms = sha256, md5
 ```
+> The configuration files are loaded using [cosmiconfig](https://github.com/cosmiconfig/cosmiconfig), which supports a lot more standards. If you wish to use another file format, please make sure it is supported [here](https://github.com/cosmiconfig/cosmiconfig?tab=readme-ov-file#usage-for-end-users)
 
 ## Contributing
 
