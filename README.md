@@ -16,19 +16,27 @@ To install checksumjs-cli, clone the repository and install the dependencies:
 ```bash
 git clone https://github.com/yourusername/checksum.git
 cd checksum
-npm install
+pnpm install
 ```
 
 > **Note:** A npm package will soon be available once the project is finished.
 
 ## Usage
 
+### Building the Project
+
+Before running the commands, you need to build the project:
+
+```bash
+pnpm run build
+```
+
 ### Generating a Checksum
 
 To generate a checksum for a file, use the following command:
 
 ```bash
-node checksum.js generate <file-path> <algorithm>
+node dist/checksum.js generate <file-path> <algorithm>
 ```
 
 ### Verifying a Checksum
@@ -36,7 +44,7 @@ node checksum.js generate <file-path> <algorithm>
 To verify a checksum, use the following command:
 
 ```bash
-node checksum.js verify <file-path> <checksum> <algorithm>
+node dist/checksum.js verify <file-path> <checksum> <algorithm>
 ```
 
 ## Contributing
