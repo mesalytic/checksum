@@ -3,6 +3,7 @@ import fs from 'fs';
 import progress from 'progress-stream';
 import chalk from 'chalk';
 import { updateProgress } from './progress';
+import logger from './logger';
 
 function calculateChecksum(filePath: string, algorithm: string, progressArray: string[], progressPercentages: number[], index: number): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -34,6 +35,7 @@ function calculateChecksum(filePath: string, algorithm: string, progressArray: s
         });
 
         stream.on('error', (err) => {
+            logger.error(`Error reading file: ${filePath} - ${err.message}`);
             reject(err);
         });
     });
@@ -58,11 +60,12 @@ export async function calculateAllChecksums(filePath: string, algorithms: string
         process.stdout.write('\x1B[?25h');
 
         updateProgress(progressArray, progressPercentages, fileSize, filePath);
+        logger.info(`Checksums calculated for file: ${filePath}`);
     } catch (error) {
         if (error instanceof Error) {
-            console.error(`${chalk.red('Error calculating checksums:')} ${error.message}`);
+            logger.error(`Error calculating checksums: ${error.message}`);
         } else {
-            console.error(`${chalk.red('Unknown error occurred while calculating checksums.')}`);
+            logger.error('Unknown error occurred while calculating checksums.');
         }
     }
 }

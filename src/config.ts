@@ -1,6 +1,6 @@
 import { cosmiconfig } from 'cosmiconfig';
-import chalk from 'chalk';
 import dotenv from 'dotenv';
+import logger from './logger';
 
 dotenv.config();
 
@@ -16,21 +16,26 @@ export async function loadConfig(): Promise<Config> {
     try {
         const result = await explorer.search();
         if (result && result.config) {
-            console.log('Configuration loaded:', result.config);
+            logger.info(`Configuration loaded: ${JSON.stringify(result.config)}`);
             config = result.config as Config;
         } else {
-            console.log('No configuration file found. Looking for environment variables...');
+            logger.warn('No configuration file found. Looking for environment variables...');
         }
     } catch (error) {
+        let errorMessage: string;
+
         if (error instanceof Error) {
-            console.error(`${chalk.red('Error loading configuration:')} ${error.message}`);
+            errorMessage = `Error loading configuration: ${error.message}`;
         } else {
-            console.error(`${chalk.red('Error loading configuration:')} ${String(error)}`);
+            errorMessage = `Error loading configuration: ${String(error)}`;
         }
+
+        logger.error(errorMessage);
     }
 
     if (process.env.DEFAULT_ALGORITHMS) {
         config.defaultAlgorithms = process.env.DEFAULT_ALGORITHMS.split(',');
+        logger.info(`Loaded configuration from environment variables: ${config.defaultAlgorithms.join(', ')}`);
     }
 
     return config;

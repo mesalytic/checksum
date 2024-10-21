@@ -1,4 +1,5 @@
 import fs from 'fs';
+import logger from './logger';
 
 export function formatBytes(bytes: number): string {
     const sizes: string[] = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
@@ -10,8 +11,10 @@ export function formatBytes(bytes: number): string {
 export async function fileExists(filePath: string): Promise<boolean> {
     try {
         await fs.promises.access(filePath, fs.constants.R_OK);
+        logger.info(`File path ${filePath} is valid`)
         return true;
     } catch {
+        logger.error(`File path ${filePath} is invalid`)
         return false;
     }
 }

@@ -6,6 +6,7 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { fileExists } from './utils';
 import { loadConfig, Config } from './config';
+import logger from './logger';
 
 const availableAlgorithms = ['sha1', 'sha256', 'sha384', 'sha512', 'md5'];
 
@@ -41,7 +42,8 @@ async function main(): Promise<void> {
                 }
 
                 if (!(await fileExists(filePath))) {
-                    console.error(`${chalk.red('Error:')} The file "${filePath}" does not exist or is not accessible.`);
+                    const errorMessage = `The file "${filePath}" does not exist or is not accessible.`;
+                    logger.error(errorMessage);
                     return;
                 }
 
@@ -51,10 +53,12 @@ async function main(): Promise<void> {
 
                 const invalidAlgorithms = algorithms.filter((alg) => !availableAlgorithms.includes(alg));
                 if (invalidAlgorithms.length > 0) {
-                    console.error(`${chalk.red('Error:')} Invalid algorithms: ${invalidAlgorithms.join(', ')}. Available algorithms are: ${availableAlgorithms.join(', ')}`);
+                    const errorMessage = `Invalid algorithms: ${invalidAlgorithms.join(', ')}. Available algorithms are: ${availableAlgorithms.join(', ')}`;
+                    logger.warn(errorMessage);
                     return;
                 }
 
+                logger.info(`Generating checksums for file: ${filePath} using algorithms: ${algorithms.join(', ')}`);
                 await calculateAllChecksums(filePath, algorithms);
             }
         )
@@ -83,30 +87,36 @@ async function main(): Promise<void> {
                 const algorithm = argv.algorithm as string;
 
                 if (!filePath) {
-                    console.error(`${chalk.red('Error:')} Please provide a file path.`);
+                    const errorMessage = 'Please provide a file path.';
+                    logger.error(errorMessage);
                     return;
                 }
 
                 if (!(await fileExists(filePath))) {
-                    console.error(`${chalk.red('Error:')} The file "${filePath}" does not exist or is not accessible.`);
+                    const errorMessage = `The file "${filePath}" does not exist or is not accessible.`;
+                    logger.error(errorMessage);
                     return;
                 }
 
                 if (!checksum) {
-                    console.error(`${chalk.red('Error:')} Please provide a checksum.`);
+                    const errorMessage = 'Please provide a checksum.';
+                    logger.error(errorMessage);
                     return;
                 }
 
                 if (!algorithm) {
-                    console.error(`${chalk.red('Error:')} Please provide an algorithm.`);
+                    const errorMessage = 'Please provide an algorithm.';
+                    logger.error(errorMessage);
                     return;
                 }
 
                 if (!availableAlgorithms.includes(algorithm)) {
-                    console.error(`${chalk.red('Error:')} Invalid algorithm: ${algorithm}. Available algorithms are: ${availableAlgorithms.join(', ')}`);
+                    const errorMessage = `Invalid algorithm: ${algorithm}. Available algorithms are: ${availableAlgorithms.join(', ')}`;
+                    logger.error(errorMessage);
                     return;
                 }
 
+                logger.info(`Verifying checksum for file: ${filePath} using algorithm: ${algorithm}`);
                 await verifyChecksum(filePath, checksum, algorithm);
             }
         )
