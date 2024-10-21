@@ -1,7 +1,5 @@
 # checksumjs-cli
 
-## Overview
-
 checksumjs-cli is designed to provide utilities for generating and verifying checksums for files. This ensures data integrity and helps detect errors or alterations in files.
 
 ## Features
