@@ -2,9 +2,9 @@ import crypto from 'crypto';
 import fs from 'fs';
 import progress from 'progress-stream';
 import chalk from 'chalk';
-import { updateProgress } from './progress.js';
+import { updateProgress } from './progress';
 
-function calculateChecksum(filePath, algorithm, progressArray, progressPercentages, index) {
+function calculateChecksum(filePath: string, algorithm: string, progressArray: string[], progressPercentages: number[], index: number): Promise<string> {
     return new Promise((resolve, reject) => {
         const hash = crypto.createHash(algorithm);
         const fileSize = fs.statSync(filePath).size;
@@ -39,7 +39,7 @@ function calculateChecksum(filePath, algorithm, progressArray, progressPercentag
     });
 }
 
-export async function calculateAllChecksums(filePath, algorithms) {
+export async function calculateAllChecksums(filePath: string, algorithms: string[]): Promise<void> {
     try {
         const progressArray = algorithms.map((algorithm) => `${chalk.blue(algorithm.toUpperCase())} Progress: ${chalk.yellow('Queued')}`);
         const progressPercentages = new Array(algorithms.length).fill(0);
@@ -48,7 +48,7 @@ export async function calculateAllChecksums(filePath, algorithms) {
         // Hide the cursor
         process.stdout.write('\x1B[?25l');
 
-        const results = [];
+        const results: string[] = [];
         for (let i = 0; i < algorithms.length; i++) {
             const result = await calculateChecksum(filePath, algorithms[i], progressArray, progressPercentages, i);
             results.push(result);
@@ -59,6 +59,10 @@ export async function calculateAllChecksums(filePath, algorithms) {
 
         updateProgress(progressArray, progressPercentages, fileSize, filePath);
     } catch (error) {
-        console.error(`${chalk.red('Error calculating checksums:')} ${error.message}`);
+        if (error instanceof Error) {
+            console.error(`${chalk.red('Error calculating checksums:')} ${error.message}`);
+        } else {
+            console.error(`${chalk.red('Unknown error occurred while calculating checksums.')}`);
+        }
     }
 }

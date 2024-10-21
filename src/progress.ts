@@ -1,8 +1,13 @@
 import readline from 'readline';
 import chalk from 'chalk';
-import { formatBytes } from './utils.js';
+import { formatBytes } from './utils';
 
-export function updateProgress(progressArray, progressPercentages, fileSize, filePath) {
+export function updateProgress(
+    progressArray: string[],
+    progressPercentages: number[],
+    fileSize: number,
+    filePath: string
+): void {
     const totalProgress = progressPercentages.reduce((acc, percentage) => acc + percentage, 0) / progressPercentages.length;
 
     readline.cursorTo(process.stdout, 0, 0);
