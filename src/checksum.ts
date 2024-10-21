@@ -4,6 +4,7 @@ import { verifyChecksum } from './verify';
 import chalk from 'chalk';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
+import { fileExists } from './utils';
 
 const availableAlgorithms = ['sha1', 'sha256', 'sha384', 'sha512', 'md5'];
 
@@ -34,8 +35,19 @@ async function main(): Promise<void> {
                     filePath = await promptFilePath();
                 }
 
+                if (!(await fileExists(filePath))) {
+                    console.error(`${chalk.red('Error:')} The file "${filePath}" does not exist or is not accessible.`);
+                    return;
+                }
+
                 if (algorithms.length === 0) {
                     algorithms = await promptAlgorithms();
+                }
+
+                const invalidAlgorithms = algorithms.filter((alg) => !availableAlgorithms.includes(alg));
+                if (invalidAlgorithms.length > 0) {
+                    console.error(`${chalk.red('Error:')} Invalid algorithms: ${invalidAlgorithms.join(', ')}. Available algorithms are: ${availableAlgorithms.join(', ')}`);
+                    return;
                 }
 
                 await calculateAllChecksums(filePath, algorithms);
@@ -65,8 +77,28 @@ async function main(): Promise<void> {
                 const checksum = argv.checksum as string;
                 const algorithm = argv.algorithm as string;
 
-                if (!checksum || !algorithm) {
-                    console.error(`${chalk.red('Error:')} Please provide a checksum and an algorithm for verification.`);
+                if (!filePath) {
+                    console.error(`${chalk.red('Error:')} Please provide a file path.`);
+                    return;
+                }
+
+                if (!(await fileExists(filePath))) {
+                    console.error(`${chalk.red('Error:')} The file "${filePath}" does not exist or is not accessible.`);
+                    return;
+                }
+
+                if (!checksum) {
+                    console.error(`${chalk.red('Error:')} Please provide a checksum.`);
+                    return;
+                }
+
+                if (!algorithm) {
+                    console.error(`${chalk.red('Error:')} Please provide an algorithm.`);
+                    return;
+                }
+
+                if (!availableAlgorithms.includes(algorithm)) {
+                    console.error(`${chalk.red('Error:')} Invalid algorithm: ${algorithm}. Available algorithms are: ${availableAlgorithms.join(', ')}`);
                     return;
                 }
 
