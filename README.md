@@ -8,6 +8,7 @@ checksumjs-cli is designed to provide utilities for generating and verifying che
 - Verify checksums against original values
 - Support for multiple file types
 - Command-line interface for easy usage
+- Configuration file support for default settings
 
 ## Installation
 
@@ -45,6 +46,33 @@ To verify a checksum, use the following command:
 
 ```bash
 node dist/checksum.js verify <file-path> <checksum> <algorithm>
+```
+
+### Configuration File
+
+You can specify default configurations in a configuration file. Supported formats include JSON, YAML, and INI. Create a configuration file named `.checksumjsrc` in the project root.
+> You can also use environment variables, either using a .env file or by other ways.
+
+#### JSON (`.checksumjsrc.json`)
+
+```json
+{
+  "defaultAlgorithms": ["sha256", "md5"]
+}
+```
+
+#### YAML (`.checksumjsrc.yaml`)
+
+```yaml
+defaultAlgorithms:
+  - sha256
+  - md5
+```
+
+#### INI (`.checksumjsrc.ini`)
+
+```ini
+defaultAlgorithms = sha256, md5
 ```
 
 ## Contributing
